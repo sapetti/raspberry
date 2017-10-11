@@ -8,7 +8,7 @@ graph = GraphAPI(ACCESS_TOKEN)
 
 # Post a photo of a parrot
 graph.post(
-    path = '645856582167140/photos',
-    source = open('CF008593.jpg')
+    path = '[[ALBUM_PATH]]',
+    source = open('PHOTO.jpg')
 )
 
