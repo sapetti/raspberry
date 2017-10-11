@@ -1,0 +1,99 @@
+#!/usr/bin/env python
+#coding: utf-8
+
+# Source: 
+# Twithief v0.1 by @AlexCorvis84
+# www.geekytheory.com y @luisvallik
+
+import os 
+import sys 
+import time 
+import shutil
+
+import pexpect #Telegram
+#from threading import Thread
+#from facepy import GraphAPI#, GraphAPIError 
+#from facebook_client import FacebookClient
+from time import sleep
+from os import listdir
+from os.path import isfile, join
+
+FILE_PATH = "/home/pi/tg/pysecure"
+FILE_PATH_SAVED = "/home/pi/tg/pysecure-saved"
+
+
+def check_files():
+	onlyfiles = [ f for f in listdir(FILE_PATH) if isfile(join(FILE_PATH,f)) and f.endswith('.jpg')]
+	return onlyfiles
+
+def send_photo_telegram():
+	try:
+		contacto_en_lista = 'Contact Name'
+		contacto = "Contact_Name"                          #Contacto a quien va el mensaje
+		file_list = check_files()
+
+		os.chdir("/home/pi/tg")
+        telegram = pexpect.spawn('./bin/telegram-cli -k tg.server.pub') #Inicia Telegram
+		print 'Conectando...'
+		telegram.expect('> ',timeout = 1200)                      #Espera a que termine de iniciar
+		print 'Conectado!'
+		telegram.sendline('contact_list')
+		sleep(10)
+		print 'Cargando contactos...'
+		telegram.expect('.*'+contacto_en_lista+'.*',timeout = 1200)
+		print 'Lista cargada'
+
+		while(file_list):
+			try:
+				img = file_list.pop(0)
+				print 'Imagen: '+img
+				telegram.sendline('send_photo '+contacto+' '+FILE_PATH+'/'+img)#Ejecuta el comando send_photo
+				print 'Enviando...'
+				sleep(10)
+				telegram.expect('photo')
+				print ('Imagen enviado a '+ contacto)            #Notifica que ya se ha mandado el mensaje
+				sleep(5)
+                                move_file(img)
+                                file_list = check_files()
+                        finally:
+                                print 'End tried for '+img
+
+		telegram.sendline('quit')                        #Cierra el programa
+	finally:
+		print 'End of send_photo_telegram'
+
+def move_file(filename):
+	try:
+		shutil.copy(FILE_PATH + '/' + filename, FILE_PATH_SAVED)
+                os.remove(FILE_PATH + '/' + filename)
+	finally:
+		print 'End of move_file'
+
+def send_whatsapp():
+	try:
+		os.system("python yowsup-cli demos -l 34652428807:+tWblvOfiydQVVhBkt13Acqx5qQ= -s 34650196295 'Movimiento detectado'")
+	finally:
+		print 'End of send_whatsapp'
+
+
+#sleep(60)
+
+print "Se ha detectado movimiento. Capturando imagen del invitado...."
+try:
+	#photo = open('/home/pi/yowsup2/pysecure/pyimg.jpg', 'rb')
+	#yowsup-cli demos -l 34652428807:frx49U1oi7GZxAm+nH4Wvq63HmY= -y
+	#sudo python yowsup-cli demos -l 34652428807:frx49U1oi7GZxAm+nH4Wvq63HmY= -s 34606729765 "Hola hola"
+	#file_path = "/home/pi/yowsup2/yowsup/pysecure/pyimg" + strftime("%H%M%S", gmtime()) + ".jpg"
+	#file_path = "/home/pi/yowsup2/yowsup/pysecure/descarga.jpg"
+	#os.system("python yowsup-cli demos -l 34652428807:frx49U1oi7GZxAm+nH4Wvq63HmY= --sendImage 34650196295 " + file_path)
+	#os.system("python yowsup-cli demos -l 34652428807:+tWblvOfiydQVVhBkt13Acqx5qQ= -s 34650196295 " + file_path)
+	#facebookClient = FacebookClient('raspsecure@gmail.com', 'Perillo14@')
+	#facebookClient.upload_photo(file_path)
+	
+	#send_whatsapp()
+	#upload_photos()
+	send_photo_telegram()
+#	thread = Thread(target = send_photo_telegram)
+#	thread.start()        
+finally:
+	print "Fin de captura"
