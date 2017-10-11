@@ -9,10 +9,10 @@ import urllib2
 
 class FacebookClient(object):
 
-	app_id='751693131538890'
+	app_id='[[APP_ID]]'
 	fb_login_url = 'https://www.facebook.com/login.php'
 	fb_access_token_url = 'https://www.facebook.com/v2.1/dialog/oauth?response_type=token&client_id='+app_id+'&redirect_uri=https%3A%2F%2Fdevelopers.facebook.com%2Ftools%2Fexplorer%2Fcallback'
-	fb_post_photo_url = 'https://graph.facebook.com/v2.1/645856582167140/photos'
+	fb_post_photo_url = 'https://graph.facebook.com/v2.1/[[ALBUM_PATH]]'
 	
 	def __init__(self, email, password):
 		super(FacebookClient, self).__init__()
