@@ -1,0 +1,96 @@
+<html>
+	<head>
+		<title>Nodeduino</title>
+
+                <script src="https://code.jquery.com/jquery.js"></script>
+
+		<!-- Latest compiled and minified CSS -->
+		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap.min.css">
+
+		<!-- Optional theme -->
+		<!--link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap-theme.min.css"-->
+		<link rel="stylesheet" href="http://bootswatch.com/darkly/bootstrap.min.css">
+
+		<!-- Latest compiled and minified JavaScript -->
+		<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/js/bootstrap.min.js"></script>
+
+		<style>
+			#commandHistory {
+				position: relative;
+				width: 100%;
+				float: left;
+				min-height: 80%;
+                                height: 60%;
+                                overflow: auto;
+			}
+		</style>
+	</head>
+	<body>
+		<div class="container">
+			<div class="page-header">
+				<h1>Nodeduino</h1>
+			<div>
+
+
+			<div id="content" class="row" style="height: 70%;">
+
+				<div class="col-md-2">
+
+				</div>
+
+
+				<div id="historyContent" class="col-md-6">
+
+					<div class="panel panel-default">
+					
+                                        	<form id="sendCommand" class="input-group" style="margin: 0 auto;">
+                                                	<input id="command" class="form-control input-lg" type="text"/>
+                                                	<span class="input-group-btn">
+                                                        	<button class="btn btn-lg btn-default" type="submit">Run</button>
+                                                	</span>
+                                        	</form>
+					</div>
+
+					<div class="panel panel-default">
+						<div class="panel-heading">Command history</div>
+						<div id="commandHistory" class="panel-body"></div>
+					</div>
+					
+
+				</div>
+			</div>
+		</div>
+
+		<!-- script src="./node_modules/socket.io/lib/socket.io.js"></script -->
+		<script src="http://192.168.0.99:3456/socket.io/lib/socket.io.js"></script>
+		<script>
+			jQuery(function ($) {
+				var socket = io.connect();
+				var $commandForm = $('#sendCommand');
+				var $message = $('#command');
+				var $history = $('#commandHistory');
+				var currentdate = new Date();
+				var datetime = "";
+
+				$commandForm.submit(function(e) {
+					e.preventDefault();
+					if($message.val() != '') {
+						socket.emit('sendCommand', $message.val());
+						$message.val('');
+					}
+				});
+
+				socket.on('newCommand', function(data) {
+					currentdate = new Date(); 
+					datetime = "" + currentdate.getDate() + "/"
+                				+ (currentdate.getMonth()+1)  + "/" 
+                				+ currentdate.getFullYear() + " @ "  
+                				+ currentdate.getHours() + ":"  
+                				+ currentdate.getMinutes() + ":" 
+                				+ currentdate.getSeconds();					
+					$history.prepend(datetime + " - " + data.cmd + "</br>");
+				});
+			});
+		</script>
+	</body>
+</html>

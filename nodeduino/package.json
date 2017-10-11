@@ -1,0 +1,12 @@
+{
+	"name" : "nodeduino",
+	"version" : "0.1.0",
+	"description" : "Comunicacion entre pc -> raspberry -> arduino -> display 7 segmentos",
+	"main" : "app.js",
+	"author" : "sapetti",
+	"dependencies" : {
+		"express" : "~3.2.4",
+		"socket.io" : "~0.9.14",
+		"python-shell" : "~0.0.3"
+	}
+}
